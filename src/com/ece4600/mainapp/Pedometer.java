@@ -25,7 +25,8 @@ public class Pedometer extends Activity implements SensorEventListener{
 	private float lastX = 0, lastY = 0, lastZ = 0;
 	private float X = 0, Y = 0, Z = 0;
 	private SensorManager sensorManager;
-	private Sensor accelerometer;
+//	private Sensor accelerometer;
+	private Sensor gyroscope;
 	private float deltaXMax = 0;
 	private float deltaYMax = 0;
 	private float deltaZMax = 0;
@@ -40,7 +41,8 @@ public class Pedometer extends Activity implements SensorEventListener{
     private float LastStepDetection = 0;
     private float StepDetectionDelta = 3500;
     private double DifferenceDelta = 1.0;
-    private double minPeak = 3.0;
+//    private double minPeak = 3.0;
+    private double minPeak = 0;
 
 
 	@Override
@@ -54,12 +56,26 @@ public class Pedometer extends Activity implements SensorEventListener{
 		start = (Button)findViewById(R.id.pedo_start);
 		stop = (Button)findViewById(R.id.pedo_stop);
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
-			accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-			sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
-			// success! we have an accelerometer
+//		if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+//			accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+//			sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+//			// success! we have an accelerometer
+//			} else {
+//   				final Toast toast = Toast.makeText(getApplicationContext(), "Do not have Accelerometer", Toast.LENGTH_SHORT);
+//   			    toast.show();
+//   			    Handler handler = new Handler();
+//   			        handler.postDelayed(new Runnable() {
+//   			           @Override
+//   			           public void run() {
+//   			               toast.cancel(); 
+//   			           }
+//   			    }, 500);
+//   			        }
+		if (sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null) {
+			gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+			sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_GAME);
 			} else {
-   				final Toast toast = Toast.makeText(getApplicationContext(), "Do not have Accelerometer", Toast.LENGTH_SHORT);
+   				final Toast toast = Toast.makeText(getApplicationContext(), "Do not have Gyroscope", Toast.LENGTH_SHORT);
    			    toast.show();
    			    Handler handler = new Handler();
    			        handler.postDelayed(new Runnable() {
@@ -83,9 +99,14 @@ public class Pedometer extends Activity implements SensorEventListener{
 		}
 
 	//onResume() register the accelerometer for listening the events
+//	protected void onResume() {
+//		super.onResume();
+//		sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+//		}
+//	
 	protected void onResume() {
 		super.onResume();
-		sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+		sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_GAME);
 		}
 	
 	//onPause() unregister the accelerometer for stop listening the events
@@ -260,15 +281,22 @@ public class Pedometer extends Activity implements SensorEventListener{
 				deltaZ = 0; 
 			}else if (iteration == 500){
 				iteration  = 0;
-				if ((test == Math.abs(X)) && (test > 1.5)){
+//				if ((test == Math.abs(X)) && (test > 1.5)){
+//					i = 1;
+//				}else if ((test == Math.abs(Y)) && (test > 1.5)){
+//					i = 2;
+//				}else if ((test == Math.abs(Z)) && (test > 1.5)){
+//					i = 3;
+//					}
+//				}
+				if ((test == Math.abs(X)) && (test > 0)){
 					i = 1;
-				}else if ((test == Math.abs(Y)) && (test > 1.5)){
+				}else if ((test == Math.abs(Y)) && (test > 0)){
 					i = 2;
-				}else if ((test == Math.abs(Z)) && (test > 1.5)){
+				}else if ((test == Math.abs(Z)) && (test > 0)){
 					i = 3;
 					}
 				}
-
 			switch(i){
 			case 1:
 				if (deltaX > 0){
